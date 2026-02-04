@@ -1139,6 +1139,7 @@ red_data_clean = red_start_stop %>%
     # - app_name and next_app_name are identical
     # - time_gap smaller than 1 sec
     filter_var = if_else((panelist_id == next_panelist_id & app_name == next_app_name & time_gap <= 1), "remove", "keep"),
+    filter_var = if_else(is.na(filter_var), "keep", filter_var),
     # I like to keep an column indicating that I changed something, therefore I create 'rows_merged'
     rows_merged = if_else((lag(filter_var)) == "remove", "Yes", "No"),
     # replace 'start_time' with 'previous_start_time' for relevant rows

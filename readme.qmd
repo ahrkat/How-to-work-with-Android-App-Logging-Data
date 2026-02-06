@@ -947,8 +947,8 @@ red_coded = red_data %>%
     event = case_when(
       # Start / open / activate
       event_type %in% c(1, 4, 11, 14, 15, 18, 19, 22, 27) ~ "Start",
-      # Stop / pause / close / deactivate
-      event_type %in% c(2, 3, 10, 13, 16, 17, 20, 23, 24, 25, 26) ~ "Stop",
+      # Stop / pause / close / deactivate (Note: Please note that we are not using 23 here, as this event type can be unreliable for certain apps (e.g. TikTok)
+      event_type %in% c(2, 3, 10, 13, 16, 17, 20, 24, 25, 26) ~ "Stop",
       # System / configuration / meta data
       event_type %in% c(5, 6, 7, 9, 8, 12, 21, 28, 29, 30, 31) ~ "Meta/Config",
       .default = NA_character_

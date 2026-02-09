@@ -1176,6 +1176,9 @@ Now we have achieved a nice, tidy data set.
 ```{r}
 glimpse(red_data_clean)
 ```
+## Some limitations
+
+Nothing is perfect, including the current processing of red app tracking data. While the presented approach solves many Android app logging data challenges, such as missing stop events, it does not cope well with interruptions to app sessions caused by notifications. For example, if a TikTok session is interrupted by a WhatsApp notification, this is sometimes reflected in the event logs by the start of a foreground service. This results in a stop event being generated for the TikTok session that is actually still running. Once the notification (in this example, WhatsApp) is closed, the previous TikTok session usually continues without any further event being logged. In practice, the missing event log usually leads to the usage time of the TikTok session being underestimated.
 
 ## Calculating Visits
 

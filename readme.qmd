@@ -986,7 +986,7 @@ red_start_stop = red_coded %>%
     next_panelist = lead(panelist_id, n = 1L)
   ) %>%
   filter(
-    event == "Start" & next_event == "Stop" & panelist_id == next_panelist
+    event == "Start" & panelist_id == next_panelist
   ) %>%
   # let's rename some variable for more convenience
   rename(
@@ -1020,7 +1020,6 @@ glimpse(red_start_stop)
 The usage duration of apps are not the only thing, we could analysis with Android app logging data. Let's say we are interested in push notifications. Therefore we want to include the information on notifications, shares and user interactions in our data set. We will use it later for some analysis.
 
 ```{r}
-
 app_meta = red_coded %>% 
   filter(
     event_type %in% c(7, 9, 10, 12)
@@ -1056,7 +1055,6 @@ Additionally, we are interested in the overall mobile screen time of our partici
 **Note:** Depending on your preferences for data management, you can either keep separate data frames or include all data in one data frame with a filter variable to easily select the necessary rows. In this tutorial, we will use a single data frame with the filter variable "event."
 
 ```{r}
-
 screen_start_stop = red_coded %>% 
   ungroup() %>% 
   filter(app_name == "Android-System") %>% 
@@ -1117,39 +1115,32 @@ red_data_clean = red_start_stop %>%
   # we need to sort our rows in the correct temporal order
   # make sure that you group by participant to avoid sorting across all participants
   group_by(panelist_id) %>%
-  # make sure that you take the grouping into account, when you sort your data
   arrange(start_time, .by_group = TRUE) %>%
-  # it is important that you use lag() or lead() based on your sorting (descending or ascending)
   mutate(
-    # we use the 'next_panelist_id' variable to ensure that participants are not mixed up by accident.
-    next_panelist_id = lead(panelist_id, n = 1L),
-    # we use the 'next_app_name' to identify potential consecutive app visits
-    next_app_name = lead(app_name, n = 1L),
-    # we need the 'next_start_time' to calculate the time_gap between events
-    next_start_time = lead(start_time, n = 1L),
-    # we calculate the time_gap in seconds
-    time_gap = as.numeric(next_start_time - end_time, units = "secs"),
-    # we use 'previous_start_time' to replace 'start_time' with the new correct timestamp if we merge consecutive app visits
-    previous_start_time = lag(start_time, n = 1L)
-  ) %>%
-  mutate(
-    # we use a filter variable to identify consecutive app visits, which we can remove later
-    # conditions are:
-    # - panelist_id and next_panelist_id are identical
-    # - app_name and next_app_name are identical
+    # we calculate the time gap to the previous event
+    time_gap = as.numeric(start_time - lag(end_time), units = "secs"),
+    # we identify a new session if:
+    # - the app name changed OR
     # - time_gap smaller than 1 sec
-    filter_var = if_else((panelist_id == next_panelist_id & app_name == next_app_name & time_gap <= 1), "remove", "keep"),
-    filter_var = if_else(is.na(filter_var), "keep", filter_var),
-    # I like to keep an column indicating that I changed something, therefore I create 'rows_merged'
-    rows_merged = if_else((lag(filter_var)) == "remove", "Yes", "No"),
-    # replace 'start_time' with 'previous_start_time' for relevant rows
-    start_time = if_else(filter_var == "keep" & rows_merged == "Yes", as_datetime(previous_start_time), as_datetime(start_time)),
-    # replace 'duration' with the updated duration for relevant rows
-    duration = if_else(filter_var == "keep" & rows_merged == "Yes", as.numeric(end_time - start_time, units = "secs"), duration),
-    datetime = if_else(filter_var == "keep" & rows_merged == "Yes", as_datetime(previous_start_time), as_datetime(datetime)),
+    # - if it is the first row (is.na)
+    is_new_session = if_else(app_name != lag(app_name) | time_gap <= 1 | is.na(time_gap), 1, 0),
+    # we assign a unique session id 
+    session_id = cumsum(is_new_session)
   ) %>%
-  # remove consecutive visits
-  filter(filter_var == "keep") %>%
+  # we summarise each row based on the session id
+  group_by(panelist_id, session_id, app_name) %>%
+  summarise(
+    date = min(date),
+    datetime = min(datetime),
+    # replace 'start_time' and 'end_time'
+    start_time = min(start_time),
+    end_time   = max(end_time),
+    # replace 'duration' with the updated duration for relevant rows
+    duration   = as.numeric(difftime(max(end_time), min(start_time), units = "secs")),
+    package_name = first(package_name), # Falls vorhanden
+    .groups = "drop"
+  ) %>%
+  mutate(event = "App") %>% 
   # I suggest replacing sensitive apps in your data set to strengthen anonymisation
   # replace 'app_names' based on our blacklisted apps
   left_join(blacklisted_apps, by = "app_name") %>%
@@ -1180,8 +1171,7 @@ red_data_clean = red_start_stop %>%
     duration,
     app_name,
     package_name,
-    event,
-    rows_merged
+    event
     )
 ```
 
@@ -1198,6 +1188,7 @@ Then we'll use this data set to determine the most frequently used apps.
 ```{r}
 most_visited_apps = red_data_clean %>%
   filter(!app_name == "Android-System") %>%
+  filter(event == "App") %>% 
   # group by application
   group_by(app_name) %>%
   # summarise the total number of visits for each application

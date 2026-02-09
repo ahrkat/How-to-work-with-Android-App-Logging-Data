@@ -975,19 +975,15 @@ Our initial goal is to achieve a data structure like the one in the blue data se
 
 ```{r}
 red_start_stop = red_coded %>%
-  filter(app_name != "Android-System") %>%
-  # we are not interested in the meta/config event_types, therefore we filter for start and stop
-  filter(event %in% c("Start", "Stop")) %>%
+  # filter for relevant event_types
+  filter(event_type %in% c(1, 2, 3, 4, 19, 20, 21, 22, 15, 16, 17, 18, 26, 27)) %>% 
   # we are using the same logic as before
   mutate(
     next_event = lead(event, n = 1L),
     next_timestamp = lead(seen_timestamp, n = 1L),
-    next_app = lead(app_name, n = 1L),
-    next_panelist = lead(panelist_id, n = 1L)
-  ) %>%
-  filter(
-    event == "Start" & panelist_id == next_panelist
-  ) %>%
+    next_panelist = lead(participant_code, n = 1L)
+    ) %>% 
+  filter(event == "Start" & panelist_id == next_panelist & !event_type %in% c(15, 16, 17, 18)) %>%
   # let's rename some variable for more convenience
   rename(
     start_timestamp = seen_timestamp,

@@ -550,8 +550,8 @@ day_data = blue_data_clean %>%
          date == random_day) %>%
   # we make sure that we have the proper timeformat
   mutate(
-    start_time = as.POSIXct(start_time, tz = "Europe/Berlin"),
-    end_time   = as.POSIXct(end_time, tz = "Europe/Berlin"),
+    start_time = as.POSIXct(as.character(start_time), tz = "Europe/Berlin"),
+    end_time   = as.POSIXct(as.character(end_time), tz = "Europe/Berlin"),
     start_hour = floor_date(start_time, "hour"),
     end_hour   = ceiling_date(end_time, "hour") - seconds(1)
   )
@@ -591,8 +591,8 @@ hourly_data = day_data %>%
   ) %>%
   # complete missing cases
   complete(
-    hour = seq.POSIXt(as.POSIXct(random_day, tz = "Europe/Berlin"),
-                      as.POSIXct(random_day, tz = "Europe/Berlin") + hours(23),
+    hour = seq.POSIXt(as.POSIXct(as.character(random_day), tz = "Europe/Berlin"),
+                      as.POSIXct(as.character(random_day), tz = "Europe/Berlin") + hours(23),
                       by = "hour"),
     app_name,
     # fill with 0
@@ -954,7 +954,8 @@ red_coded = red_data %>%
   # group by panelist_id
   group_by(panelist_id) %>% 
   # sort rows in temporal order by participant
-  arrange(seen_timestamp, .by_group = TRUE)
+  arrange(seen_timestamp, .by_group = TRUE) %>% 
+  ungroup()
 ```
 
 Let's have a quick look at our data.

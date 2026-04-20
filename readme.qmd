@@ -989,9 +989,10 @@ gc()
 #   # sort rows in temporal order by participant
 #   arrange(seen_timestamp, .by_group = TRUE) %>% 
 #   ungroup()
-setDT(red_coded)
-setorder(red_coded, panelist_id, seen_timestamp)
-red_coded = as_tibble(red_coded)
+
+# setDT(red_coded)
+# setorder(red_coded, panelist_id, seen_timestamp)
+# red_coded = as_tibble(red_coded)
 ```
 
 Let's have a quick look at our data.

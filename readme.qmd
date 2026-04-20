@@ -76,6 +76,7 @@ install.packages("ggplot2")
 install.packages("extrafont")
 install.packages("forcats")
 install.packages("stringr")
+install.packages("data.table")
 ```
 
 And load the R packages.

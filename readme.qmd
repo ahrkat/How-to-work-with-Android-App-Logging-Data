@@ -949,6 +949,8 @@ red_coded = red_data %>%
   ) %>% 
   # let's reorder our columns real quick
   select(panelist_id, date, datetime, seen_timestamp, event_type, event_type_read, event, app_name, full_package_name, package_name) %>% 
+  
+red_coded = red_coded %>% 
   # remove background apps 
   filter(!package_name %in% background_apps$pcn) %>% 
   # group by panelist_id
@@ -956,6 +958,9 @@ red_coded = red_data %>%
   # sort rows in temporal order by participant
   arrange(seen_timestamp, .by_group = TRUE) %>% 
   ungroup()
+
+gc()
+
 ```
 
 Let's have a quick look at our data.

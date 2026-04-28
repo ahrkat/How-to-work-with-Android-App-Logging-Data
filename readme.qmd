@@ -743,7 +743,7 @@ plot6 = ggplot(instagram_visual) +
       xend = end_time,
       color = app_name
     ),
-    size = 20
+    linewidth = 20
   ) +
   scale_color_manual(values = color_map) +
   scale_x_datetime(date_breaks = "20 secs",

@@ -189,8 +189,7 @@ blacklisted_apps = readRDS("data/blacklisted_apps.rds") %>% select(-app_package)
 Let's import our data set.
 
 ```{r import data}
-blue_data = readRDS("data/blue_data.rds") %>% 
-  slice_sample(n = 1000)
+blue_data = readRDS("data/blue_data.rds") 
 ```
 
 And have a quick look.
@@ -778,13 +777,6 @@ We have now learned about some basic concepts and analyses of app tracking data 
 
 If you have such a data set, you can close your laptop at this point and be happy. If you want to continue, I would suggest taking a break now and then we'll look at the red data set.
 
-```{r}
-
-rm(list=setdiff(ls(), c("background_apps", "blacklisted_apps")))
-gc()
-   
-```
-
 
 # The red data set
 
@@ -970,33 +962,17 @@ red_coded = red_data %>%
       .default = NA_character_
     ),
     datetime = as_datetime(seen_timestamp / 1000, tz = "Europe/Berlin")
-  )
-  
-```
-
-```{r}
-red_coded = red_coded %>% 
+  ) %>% 
   # let's reorder our columns real quick
-  select(panelist_id, date, datetime, seen_timestamp, event_type, event_type_read, event, app_name, full_package_name, package_name) 
-```
-
-```{r}
-red_coded = red_coded %>% 
+  select(panelist_id, date, datetime, seen_timestamp, event_type, event_type_read, event, app_name, full_package_name, package_name) %>% 
   # remove background apps 
-  filter(!package_name %in% background_apps$pcn) 
-```
-
-```{r}
-red_coded = red_coded %>% 
+  filter(!package_name %in% background_apps$pcn) %>% 
   # group by panelist_id
-  group_by(panelist_id) 
-```
+  group_by(panelist_id) %>% 
+  # sort rows in temporal order by participant
+  arrange(seen_timestamp, .by_group = TRUE)
 
-```{r}
-rm(list=setdiff(ls(), c("background_apps", "blacklisted_apps", "red_coded")))
-gc()
 ```
-
 
 Let's have a quick look at our data.
 

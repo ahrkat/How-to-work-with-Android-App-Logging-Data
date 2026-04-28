@@ -1103,8 +1103,8 @@ app_meta = red_coded %>%
     event_type %in% c(7, 9, 10, 12)
   ) %>%
   mutate(
-    start_time = as.POSIXct(seen_timestamp / 1000, format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin"),
-    end_time = as.POSIXct(seen_timestamp / 1000, format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin"),
+    start_time = as.POSIXct(seen_timestamp / 1000, origin = "1970-01-01", format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin"),
+    end_time = as.POSIXct(seen_timestamp / 1000, origin = "1970-01-01", format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin"),
     duration = 0,
     stop_type = NA_character_,
     event = case_when(

@@ -1160,7 +1160,7 @@ screen_start_stop = red_coded %>%
   ) %>%
   # calculate duration in seconds
   mutate(
-    duration = as.numeric(difftime(stop_timestamp, start_timestamp, units = "secs")),
+    duration = (stop_timestamp - start_timestamp) / 1000,
     start_time = as.POSIXct(start_timestamp / 1000, origin = "1970-01-01", tz = "Europe/Berlin"),
     end_time   = as.POSIXct(stop_timestamp  / 1000, origin = "1970-01-01", tz = "Europe/Berlin"),
     stop_type = NA_character_,
@@ -1188,8 +1188,8 @@ We have now reached an interim stage by recoding information about the start and
 red_data_clean = red_start_stop %>%
   # convert start_time and end_time to proper datetime format, make sure to choose the correct timezone (tz)
   mutate(
-    start_time = as.POSIXct(start_timestamp / 1000, format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin"),
-    end_time   = as.POSIXct(stop_timestamp / 1000,   format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin")
+    start_time = as.POSIXct(start_timestamp / 1000, origin = "1970-01-01", format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin"),
+    end_time   = as.POSIXct(stop_timestamp / 1000, origin = "1970-01-01",   format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin")
   ) %>%
   # we need to sort our rows in the correct temporal order
   # make sure that you group by participant to avoid sorting across all participants

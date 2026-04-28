@@ -1160,9 +1160,9 @@ screen_start_stop = red_coded %>%
   ) %>%
   # calculate duration in seconds
   mutate(
-    duration = (as.numeric(stop_timestamp) - as.numeric(start_timestamp)) / 1000, # in seconds
-    start_time = as.POSIXct(start_timestamp / 1000, format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin"),
-    end_time = as.POSIXct(stop_timestamp / 1000, format = "%Y-%m-%d %H:%M:%S", tz = "Europe/Berlin"),
+    duration = as.numeric(difftime(stop_timestamp, start_timestamp, units = "secs")),
+    start_time = as.POSIXct(start_timestamp / 1000, origin = "1970-01-01", tz = "Europe/Berlin"),
+    end_time   = as.POSIXct(stop_timestamp  / 1000, origin = "1970-01-01", tz = "Europe/Berlin"),
     stop_type = NA_character_,
     # our filter variable
     event = "Screen"

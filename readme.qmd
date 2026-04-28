@@ -198,11 +198,11 @@ And have a quick look.
 ```{r}
 glimpse(blue_data)
 ```
-For the purposes of this tutorial, it is sufficient to examine a sample of measurements. To reduce RAM, take a sample of 1,000 observations.
+For the purposes of this tutorial, it is sufficient to examine a sample of measurements. To reduce RAM, take a sample of 100,000 observations.
 
 ```{r}
 blue_data = blue_data %>% 
-  slice_sample(n = 1000)
+  slice_sample(n = 100000)
 ```
 
 
@@ -898,10 +898,10 @@ Let's check how our data set looks like.
 glimpse(red_data)
 
 ```
-For the purposes of this tutorial, it is sufficient to examine a sample of measurements. To reduce RAM, take a sample of 1,000 observations.
+For the purposes of this tutorial, it is sufficient to examine a sample of measurements. To reduce RAM, take a sample of 100,000 observations.
 
 ```{r}
-red_data <- red_data %>% slice_sample(n = 1000)
+red_data <- red_data %>% slice_sample(n = 100000)
 ```
 
 Then let's take a quick look at the event types in our data.

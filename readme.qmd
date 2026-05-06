@@ -195,13 +195,6 @@ And have a quick look.
 ```{r}
 glimpse(blue_data)
 ```
-For the purposes of this tutorial, it is sufficient to examine a sample of measurements. To reduce RAM, take a sample of 100,000 observations.
-
-```{r}
-blue_data = blue_data %>% 
-  slice_sample(n = 100000)
-```
-
 
 ```{r}
 blue_data_clean = blue_data %>% 
@@ -775,6 +768,13 @@ We have now learned about some basic concepts and analyses of app tracking data 
 
 If you have such a data set, you can close your laptop at this point and be happy. If you want to continue, I would suggest taking a break now and then we'll look at the red data set.
 
+**Optional:** Let's free up some RAM.
+
+```{r}
+# removes objectives in the R environment
+rm(list=ls())
+gc()
+```
 
 # The red data set
 
@@ -888,12 +888,6 @@ Let's check how our data set looks like.
 glimpse(red_data)
 
 ```
-For the purposes of this tutorial, it is sufficient to examine a sample of measurements. To reduce RAM, take a sample of 100,000 observations.
-
-```{r}
-red_data <- red_data %>% slice_sample(n = 100000)
-```
-
 Then let's take a quick look at the event types in our data.
 
 ```{r}

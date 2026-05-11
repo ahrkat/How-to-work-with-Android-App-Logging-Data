@@ -876,13 +876,16 @@ Let's take a closer look at the event_types. Here, we can refer to the article b
 | 31         | App component used             | An event type denoting that a component in the package has been used.                                                                                                                                                                                      |
 +------------+--------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-In order to get started, we first need our data.
+In order to get started, we first need our data. We will also reload the preliminary list of background and blacklisted apps. 
 
 ```{r}
 red_data = readRDS("data/red_data.rds")
+
+background_apps = read.csv("data/background_system_packages.csv") # based on Parry & Toth (2025) with some smaller extensions
+blacklisted_apps = readRDS("data/blacklisted_apps.rds") %>% select(-app_package) %>% distinct(app_name, .keep_all = TRUE)
 ```
 
-Let's check how our data set looks like.
+Let's check what our data set looks like.
 
 ```{r}
 glimpse(red_data)

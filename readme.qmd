@@ -914,7 +914,7 @@ red_days = red_data %>%
 red_data_small = red_data %>% 
   filter(date %in% red_days)
 
-# red_data = red_data_small
+red_data = red_data_small
 ```
 
 Let's check what our data set looks like.

@@ -894,7 +894,9 @@ The next code chunk will introduce two ways to minimise the dataset: the first b
 If you're not using a binder or have engough RAM, feel free to skip this code chunk.
 
 ```{r}
-# Optional!
+#| eval: false
+
+# Optional! Only run this if you are using the binder environment or have limited RAM.
 
 # Smaller sample size based on fewer participants.
 red_participants = red_data %>% 
@@ -905,16 +907,16 @@ red_participants = red_data %>%
 red_data_small = red_data %>% 
   filter(panelist_id %in% red_participants)
 
-# Smaller sample size based on fewer tracked days.
+# Or: Smaller sample size based on fewer tracked days. 
 red_days = red_data %>% 
   distinct(date) %>% 
   slice_sample(n = 4) %>% # Select the desired number of days.
   pull(date)
 
 red_data_small = red_data %>% 
-  filter(date %in% red_days)
+  filter(date %in% red_days) #This will overwrite the read_data_small created based on fewer participants and will replace it by the smaller sample based on fewer tracked days.
 
-red_data = red_data_small
+red_data = red_data_small #
 ```
 
 Let's check what our data set looks like.
